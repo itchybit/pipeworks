@@ -1,55 +1,29 @@
 import JSRocket from './services/jsRocket';
-import {vMan} from './ValueManager'
-import {Pipe, Camera, Cog} from './DynamicEntity'
+import TrackSynchronizer from './synchronizer/trackSynchronizer';
+import { Pipe, Camera, Cog } from './controlledEntities';
 
-const DYNAMIC_ENTITIES = [
-  new Pipe('p1'),
-  new Pipe('p2'),
-  new Camera('cam'),
-  new Cog('cog'),
-]
 
 class Demo {
 
   constructor() {
-    this.syncDevice = new JSRocket.SyncDevice();
-
+    const syncDevice = new JSRocket.SyncDevice();
+    this.trackSynchronizer = new TrackSynchronizer(syncDevice);
+    const controlledEntities = [
+      new Pipe('p1', this.trackSynchronizer),
+      new Pipe('p2', this.trackSynchronizer),
+      new Camera('cam', this.trackSynchronizer),
+      new Cog('cog', this.trackSynchronizer),
+    ];
+    syncDevice.init();
   }
 
   init() {
     console.log("Demo init");
-    this.syncDevice.on('ready', () => {this.onSyncReady()});
-    this.syncDevice.on('update', (row) => {this.onSyncUpdate(row)});
-    this.syncDevice.on('play', () => {this.onPlay()});
-    this.syncDevice.on('pause', () => {this.onPause()});
-    this.syncDevice.init();
-
   }
 
   updateValues() {
 
   }
-
-  onSyncReady() {
-    vMan.init(this.syncDevice)
-    console.log("onSyncReady");
-  }
-
-  onSyncUpdate(row) {
-    vMan.time = row
-    console.log("onSyncUpdate", row);
-    var de = DYNAMIC_ENTITIES[0];
-    console.log(JSON.stringify( de.getAll() ));
-  }
-
-  onPlay() {
-    console.log("onPlay");
-  }
-
-  onPause() {
-    console.log("onPause");
-  }
-
 }
 
 export default new Demo();
