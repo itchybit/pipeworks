@@ -7,6 +7,8 @@ import Renderer from './render/renderer';
 class Demo {
 
   constructor() {
+    this.playing = false;
+
     const syncDevice = new JSRocket.SyncDevice();
     syncDevice.on('play', () => this.play());
     syncDevice.on('pause', () => this.pause());
@@ -36,6 +38,7 @@ class Demo {
   }
 
   render(context) {
+    console.log(context);
     this.renderer.render({}, context);
   }
 

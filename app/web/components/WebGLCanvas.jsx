@@ -4,8 +4,10 @@ export default class WebGLCanvas extends Component {
   constructor() {
     super();
     this.state = {};
+    console.log("Component created");
   }
   componentDidMount() {
+    console.log("Component mounted");
     try {
       const context =
         this.refs.glcanvas.getContext('webgl') ||
@@ -19,7 +21,10 @@ export default class WebGLCanvas extends Component {
   }
 
   render() {
-    this.props.renderer.render(this.state.context);
+    console.log(this.state);
+    if (this.state.context) {
+      this.props.renderer.render(this.state.context);
+    }
     return (
       <canvas ref="glcanvas" id="glcanvas" width="640" height="480">
         Your browser doesn't appear to support the
