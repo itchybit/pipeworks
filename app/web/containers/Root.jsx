@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 
-import HelloWorld from '../components/HelloWorld.jsx';
-import Demo from '../components/Demo.jsx';
+import App from './App.jsx';
 
 export default class Root extends Component {
   render() {
     return (
-      <Demo />
+      <App />
     );
   }
 }

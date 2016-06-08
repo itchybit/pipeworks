@@ -1,6 +1,6 @@
-import SyncValueGroup from '../synchronizer/syncValueGroup';
+import SyncValueGroup from '../../synchronizer/syncValueGroup';
 
-import { SEPARATOR } from '../constants';
+import { SEPARATOR } from '../../constants';
 
 export default class ControlledEntity {
   constructor(type, name, prototype, trackSynchronizer) {

@@ -1,6 +1,6 @@
 import ControlledEntity from './controlledEntity';
 
-import { CP_VERTEX } from '../constants';
+import { CP_VERTEX } from '../../constants';
 
 export default class Cog extends ControlledEntity {
   constructor(name, trackSynchronizer) {
