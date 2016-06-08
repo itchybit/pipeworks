@@ -8,6 +8,10 @@ class Demo {
 
   constructor() {
     const syncDevice = new JSRocket.SyncDevice();
+    syncDevice.on('play', () => this.play());
+    syncDevice.on('pause', () => this.pause());
+    syncDevice.on('update', (time) => this.setTime(time));
+    syncDevice.on('ready', () => this.init());
     this.trackSynchronizer = new TrackSynchronizer(syncDevice);
     // Test entities, move to actual scene when implemented
     const controlledEntities = [
@@ -24,18 +28,34 @@ class Demo {
 
   init() {
     console.log("Demo init");
+    this.trackSynchronizer.init();
   }
 
-  updateValues() {
-
+  update(time) {
+    this.trackSynchronizer.setTime(time);
   }
 
   render(context) {
     this.renderer.render({}, context);
   }
 
-  update() {
+  togglePlay() {
+    this.playing = !this.playing;
+  }
 
+  play() {
+    this.playing = true;
+    console.log("Play");
+  }
+
+  pause() {
+    this.playing = false;
+    console.log("Pause");
+  }
+
+  setTime(time) {
+    console.log("Setting time");
+    this.trackSynchronizer.setTime(time);
   }
 }
 

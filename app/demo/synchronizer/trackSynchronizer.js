@@ -4,11 +4,6 @@ export default class TrackSynchronizer {
     this.trackNames = [];
     this.time = 0;
     this.syncDevice = syncDevice;
-
-    syncDevice.on('ready', () => this._init());
-    syncDevice.on('update', (time) => this._update(time));
-    syncDevice.on('play', () => this._play());
-    syncDevice.on('pause', () => this._pause());
   }
 
   addTrack(trackName) {
@@ -16,24 +11,16 @@ export default class TrackSynchronizer {
     this.tracks[trackName] = this.syncDevice.getTrack(trackName);
   }
 
-  _init() {
+  init() {
     this.trackNames.forEach((trackName) => {
       console.log("Sync ready!");
       this.tracks[trackName] = this.syncDevice.getTrack(trackName);
     });
   }
 
-  _update(time) {
+  setTime(time) {
     this.time = time;
     this._printAll();
-  }
-
-  _play() {
-    console.log("Play");
-  }
-
-  _pause() {
-    console.log("pause");
   }
 
   getCurrentValueFromTrack(trackName) {
