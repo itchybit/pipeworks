@@ -40,6 +40,9 @@
         test: /.mp3$/,
         exclude: /node_modules/,
         loader: 'file-loader',
+      },{
+        test: /\.glsl$/,
+        loader: 'webpack-glsl'
       }]
     }
   }

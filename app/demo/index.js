@@ -52,7 +52,6 @@ class Demo {
   }
 
   render(context) {
-    console.log(context);
     this.renderer.render({}, context);
   }
 
