@@ -1,3 +1,8 @@
+import vertexShaderSource from '../shaders/debug/vertex.glsl';
+import fragmentShaderSource from '../shaders/debug/fragment.glsl';
+
+import ShaderProgram from './shaderProgram';
+
 export default class Renderer {
   constructor() {
 
@@ -11,6 +16,7 @@ export default class Renderer {
   }
 
   setup(gl) {
+    const shader = new ShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
     gl.clearColor(0, 0, 0, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
