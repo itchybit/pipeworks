@@ -44,7 +44,7 @@ class Demo {
   }
 
   onAudioReady(){
-    console.log("on audio ready");
+    // console.log("on audio ready");
   }
 
   update(time) {
@@ -52,6 +52,12 @@ class Demo {
   }
 
   render(context) {
+    if(this.playing) {
+      let row = this.audio.currentTime * ROW_RATE;
+      this.trackSynchronizer.syncDevice.update(row);
+      this.trackSynchronizer.setTime(row)
+    }
+
     this.renderer.render({}, context);
   }
 
@@ -72,7 +78,7 @@ class Demo {
   }
 
   setTime(time) {
-    console.log("Setting time");
+    // console.log("Setting time");
     this.audio.currentTime = time / ROW_RATE;
     this.trackSynchronizer.setTime(time);
   }

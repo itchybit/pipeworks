@@ -22,7 +22,7 @@ export default class TrackSynchronizer {
     this.time = time;
     // this._printAll();
   }
-
+  
   getCurrentValueFromTrack(trackName) {
     if (trackName === 'time') {
       return this.time;

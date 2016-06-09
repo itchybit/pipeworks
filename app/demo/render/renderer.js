@@ -3,7 +3,7 @@ export default class Renderer {
 
   }
   render(scene, context) {
-    console.log("Render scene");
+    // console.log("Render scene");
     const gl = context;
 
     this.setup(gl);
