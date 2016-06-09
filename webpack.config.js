@@ -36,6 +36,10 @@
         query: {
           presets: ['react', 'es2015']
         }
+      },{
+        test: /.mp3$/,
+        exclude: /node_modules/,
+        loader: 'file-loader',
       }]
     }
   }

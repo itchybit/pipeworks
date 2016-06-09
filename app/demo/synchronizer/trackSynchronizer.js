@@ -20,7 +20,7 @@ export default class TrackSynchronizer {
 
   setTime(time) {
     this.time = time;
-    this._printAll();
+    // this._printAll();
   }
 
   getCurrentValueFromTrack(trackName) {
