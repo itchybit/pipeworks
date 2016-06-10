@@ -44,6 +44,9 @@
       },{
         test: /\.glsl$/,
         loader: 'webpack-glsl'
+      },{
+        test: /\.obj$/,
+        loader: 'raw-loader'
       }]
     }
   }
