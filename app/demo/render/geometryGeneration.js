@@ -1,8 +1,10 @@
 export const geometryGenerator = {
   pipe: gen_pipe,
-  cog: (params) => { console.log("generate cog"); },
-}
+  cog: (params) => {
+    console.log("generate cog");
+  }
+};
 
-gen_pipe(p){
+function gen_pipe(p) {
 
 }
