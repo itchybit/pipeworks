@@ -19,6 +19,10 @@ export default class SyncValueGroup {
   }
 
   getAll() {
-    console.log("Implement!");
+    let ret = []
+    this.syncValues.forEach((value, key) => {
+      ret.push([key, value.get()]);
+    })
+    return new Map(ret);
   }
 }

@@ -6,6 +6,6 @@ export default class SyncValue {
   }
 
   get() {
-    return trackSynchronizer.getCurrentValueFromTrack(this.trackName);
+    return this.trackSynchronizer.getCurrentValueFromTrack(this.trackName);
   }
 }

@@ -1,7 +1,7 @@
 import vertexShaderSource from '../shaders/debug/vertex.glsl';
 import fragmentShaderSource from '../shaders/debug/fragment.glsl';
 import glMatrix from 'gl-matrix';
-
+import {geometryGenerator} from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
 
 import * as glHelpers from '../helpers/glHelpers';
@@ -13,12 +13,21 @@ export default class Renderer {
     this.shader.attachUniform("modelViewMatrix", "mat4");
     this.shader.attachAttribute("position", "vec3");
   }
-  render(scene, context) {
+
+  render(sceneData, context) {
+    // console.log("Render scene");
     const gl = context;
 
     this.setup(gl);
     this.resize(gl, 640, 480);
     this.clearCanvas(gl);
+
+    // sceneData.forEach((value, key)=> {
+    //   // console.log(value, key)
+    //   if (geometryGenerator[value.get('type')]){
+    //     // const generatedGeometry = geometryGenerator[value.get('type')](value)
+    //   }
+    // })
 
     const triangle = [
        0.0,  0.5,  0.0,
@@ -34,6 +43,7 @@ export default class Renderer {
     gl.vertexAttribPointer(this.shader.getAttributeLocation("position"), 3, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+
   }
 
   setup(gl) {

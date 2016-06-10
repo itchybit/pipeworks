@@ -8,12 +8,12 @@ export default class TrackSynchronizer {
 
   addTrack(trackName) {
     this.trackNames.push(trackName);
-    this.tracks[trackName] = this.syncDevice.getTrack(trackName);
+    // this.tracks[trackName] = this.syncDevice.getTrack(trackName);
   }
 
   init() {
+    console.log("tracksync init!");
     this.trackNames.forEach((trackName) => {
-      console.log("Sync ready!");
       this.tracks[trackName] = this.syncDevice.getTrack(trackName);
     });
   }
@@ -22,12 +22,17 @@ export default class TrackSynchronizer {
     this.time = time;
     // this._printAll();
   }
-  
+
   getCurrentValueFromTrack(trackName) {
     if (trackName === 'time') {
       return this.time;
     } else {
-      return this.tracks[trackName].getValue(this.time);
+      if (this.tracks[trackName]){
+        return this.tracks[trackName].getValue(this.time);
+      } else {
+        return 0.0
+      }
+
     }
   }
 

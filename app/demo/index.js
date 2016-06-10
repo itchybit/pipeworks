@@ -4,25 +4,29 @@ import TrackSynchronizer from './synchronizer/trackSynchronizer';
 import { Pipe, Camera, Cog } from './scene/controlledEntities';
 import Renderer from './render/renderer';
 import audio from "./static/testsong.mp3";
+import Scene from "./scene/scene"
 
 class Demo {
 
   constructor() {
     this.playing = false;
     this.audio = new Audio();
+
     const syncDevice = new JSRocket.SyncDevice();
+
     syncDevice.on('play', () => this.play());
     syncDevice.on('pause', () => this.pause());
     syncDevice.on('update', (time) => this.setTime(time));
     syncDevice.on('ready', () => this.init());
+
     this.trackSynchronizer = new TrackSynchronizer(syncDevice);
-    // Test entities, move to actual scene when implemented
-    const controlledEntities = [
+
+    this.scene = new Scene([
       new Pipe('p1', this.trackSynchronizer),
       new Pipe('p2', this.trackSynchronizer),
       new Camera('cam', this.trackSynchronizer),
       new Cog('cog', this.trackSynchronizer),
-    ];
+    ]);
 
     this.renderer = new Renderer();
 
@@ -31,6 +35,7 @@ class Demo {
 
   init() {
     console.log("Demo init");
+
     this.trackSynchronizer.init();
     this.prepareAudio();
   }
@@ -58,7 +63,7 @@ class Demo {
       this.trackSynchronizer.setTime(row)
     }
 
-    this.renderer.render({}, context);
+    this.renderer.render(this.scene.getAll(), context);
   }
 
   togglePlay() {
