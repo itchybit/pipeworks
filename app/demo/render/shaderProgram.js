@@ -1,4 +1,5 @@
 import * as shaderHelpers from '../helpers/shaderHelpers';
+import { uniformConstants } from '../constants/uniformConstants';
 
 export default class ShaderProgram {
   constructor(vertexSource, fragmentSource) {
@@ -30,8 +31,11 @@ export default class ShaderProgram {
     gl.enableVertexAttribArray(this.attributes[name]);
   }
 
-  updateUniform(name, value) {
-
+  updateUniform(gl, name, value) {
+    const uniform = this.uniforms.get(name);
+    const loc = uniform.location;
+    const type = uniform.type;
+    uniformConstants[type](gl, loc, value);
   }
 
   build(gl) {
