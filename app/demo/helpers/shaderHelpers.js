@@ -9,10 +9,14 @@ export function createShaderFromScript(gl, shaderSource, shaderType) {
   } else {
     throw "Invalid shader type: " + shaderType + " provided!";
   }
-  compileShader(gl, shaderSource, shaderTypeConstant);
+  console.log("Create shader from script");
+  console.log(shaderSource);
+  return compileShader(gl, shaderSource, shaderTypeConstant);
 }
 
 export function createProgramFromScripts(gl, vertexSource, fragmentSource) {
+  console.log(gl);
+  console.log(vertexSource);
   const vertexShader = createShaderFromScript(gl, vertexSource, 'vertex');
   const fragmentShader = createShaderFromScript(gl, fragmentSource, 'fragment');
   return createProgram(gl, vertexShader, fragmentShader);
@@ -32,4 +36,19 @@ function createProgram(gl, vertexShader, fragmentShader) {
   }
 
   return program;
+}
+
+function compileShader(gl, shaderSource, shaderType) {
+  const shader = gl.createShader(shaderType);
+
+  gl.shaderSource(shader, shaderSource);
+  gl.compileShader(shader);
+
+  var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (!success) {
+    console.log(shaderSource);
+    throw ("Failed to compile shader: " + gl.getShaderInfoLog(shader));
+  }
+
+  return shader;
 }
