@@ -1,5 +1,4 @@
-import vertexShaderSource from '../shaders/debug/vertex.glsl';
-import fragmentShaderSource from '../shaders/debug/fragment.glsl';
+import debugShader from '../shaders/debug';
 import glMatrix from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
@@ -8,10 +7,7 @@ import * as glHelpers from '../helpers/glHelpers';
 
 export default class Renderer {
   constructor() {
-    this.shader = new ShaderProgram(vertexShaderSource, fragmentShaderSource);
-    this.shader.attachUniform("projectionMatrix", "mat4");
-    this.shader.attachUniform("modelViewMatrix", "mat4");
-    this.shader.attachAttribute("position", "vec3");
+    this.shader = debugShader;
   }
 
   render(sceneData, context) {
