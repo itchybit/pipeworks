@@ -17,6 +17,7 @@ export default class Renderer {
 
   setup(gl) {
     const shader = new ShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
+    shader.build(gl);
     gl.clearColor(0, 0, 0, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);

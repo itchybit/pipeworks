@@ -31,7 +31,7 @@ export default class ShaderProgram {
       augmentedVertexSource,
       augmentedFragmentSource);
 
-    uniforms.forEach((uniform) => {
+    this.uniforms.forEach((uniform) => {
       uniform.location = getUniformLocation(this.program, uniform.name);
     });
   }
