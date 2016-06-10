@@ -1,5 +1,5 @@
 import debugShader from '../shaders/debug';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
 
@@ -29,9 +29,9 @@ export default class Renderer {
     //
 
     const triangle = [
-       0.0,  0.5,  -10.0,
-      -0.5,  -0.5,  -10.0,
-       0.5, -0.5,  -10.0
+       0.0,  0.5,  0.0,
+      -0.5,  -0.5,  0.0,
+       0.5, -0.5,  0.0
     ]
     const triangleBuffer = glHelpers.bufferData(gl, triangle);
 
@@ -40,7 +40,11 @@ export default class Renderer {
     const projectionMatrix = mat4.create();
     mat4.perspective(projectionMatrix, 45, this.viewPortWidth / this.viewPortHeight, this.nearPlane, this.farPlane);
 
+    const viewMatrix = mat4.create();
+    mat4.lookAt(viewMatrix, vec3.fromValues(0, 10, 10), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
+
     this.shader.updateUniform(gl, "projectionMatrix", projectionMatrix);
+    this.shader.updateUniform(gl, "modelViewMatrix", viewMatrix);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
 
