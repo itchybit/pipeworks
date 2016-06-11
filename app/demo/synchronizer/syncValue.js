@@ -1,11 +1,31 @@
+import {defaultSyncValues, trackedValues} from "../constants/defaultSyncValues"
+
 export default class SyncValue {
   constructor(trackName, trackSynchronizer) {
     this.trackName = trackName;
     this.trackSynchronizer = trackSynchronizer;
-    this.trackSynchronizer.addTrack(trackName);
+    this.tracked = trackedValues.indexOf(this.trackName) > -1;
+    // console.log(this.tracked, this.trackName,trackedValues.indexOf(this.trackName));
+    if (this.tracked){
+      this.trackSynchronizer.addTrack(trackName);
+    }
+    else if (!defaultSyncValues.hasOwnProperty(this.trackName)) {
+      console.warn("No default sync value for untracked track " + this.trackName);
+    }
   }
 
   get() {
-    return this.trackSynchronizer.getCurrentValueFromTrack(this.trackName);
+    if (this.tracked) {
+      const defaultValue = defaultSyncValues[this.trackName];
+      if (defaultValue){
+        return defaultValue + this.trackSynchronizer.getCurrentValueFromTrack(this.trackName);
+      } else {
+        return this.trackSynchronizer.getCurrentValueFromTrack(this.trackName);
+      }
+    } else if (defaultSyncValues[this.trackName]) {
+      return defaultSyncValues[this.trackName];
+    } else {
+      return 0.0;
+    }
   }
 }

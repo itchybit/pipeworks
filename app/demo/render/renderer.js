@@ -1,6 +1,7 @@
 import debugShader from '../shaders/debug';
 import { mat4, vec3 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
+import * as geomGen from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
 
 import Mesh from './mesh';

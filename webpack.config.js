@@ -47,6 +47,9 @@
       },{
         test: /\.obj$/,
         loader: 'raw-loader'
+      },{
+        test: /\.json$/,
+        loader: 'json-loader'
       }]
     }
   }
