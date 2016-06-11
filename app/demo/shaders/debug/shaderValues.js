@@ -4,6 +4,7 @@ export const shaderValues = {
     "modelViewMatrix": "mat4"
   },
   attributes: {
-    "position": "vec3"
+    "position": "vec3",
+    "normal": "vec3"
   }
 }
