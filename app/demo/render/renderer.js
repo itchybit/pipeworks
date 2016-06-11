@@ -12,31 +12,25 @@ import * as glHelpers from '../helpers/glHelpers';
 export default class Renderer {
   constructor() {
     this.shader = debugShader;
-    // this.cubeMesh = new Mesh(cube);
     this.triangleMesh = new Mesh(triangle);
     this.monkeyMesh = new Mesh(monkey);
     this.nearPlane = 0.1;
     this.farPlane = 100.0;
-
-    // console.log();
   }
 
   render(sceneData, context) {
-    // console.log("Render scene");
     const gl = context;
+
+    // console.log(sceneData.get('cam'));
+
+    const cam = sceneData.get('cam');
+    const camPos = cam.get("pos");
+    const camTarget = cam.get("target");
+    // console.log(camPos.get('z'));
 
     this.setup(gl);
     this.resize(gl, 640, 480);
     this.clearCanvas(gl);
-
-    // sceneData.forEach((value, key)=> {
-    //   // console.log(value, key)
-    //   if (geometryGenerator[value.get('type')]){
-    //     // const generatedGeometry = geometryGenerator[value.get('type')](value)
-    //   }
-    // })
-    //
-    //
 
     this.shader.use(gl);
 
@@ -44,7 +38,11 @@ export default class Renderer {
     mat4.perspective(projectionMatrix, 45, this.viewPortWidth / this.viewPortHeight, this.nearPlane, this.farPlane);
 
     const viewMatrix = mat4.create();
-    mat4.lookAt(viewMatrix, vec3.fromValues(0, 0, 10), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
+    mat4.lookAt(
+      viewMatrix,
+      vec3.fromValues(camPos.get('x'), camPos.get('y'), camPos.get('z')),
+      vec3.fromValues(camTarget.get('x'), camTarget.get('y'), camTarget.get('z')),
+      vec3.fromValues(0, 1, 0));
 
     const normalMatrix = mat4.create();
     mat4.transpose(normalMatrix, viewMatrix);
