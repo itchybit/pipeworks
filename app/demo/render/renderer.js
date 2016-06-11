@@ -46,8 +46,13 @@ export default class Renderer {
     const viewMatrix = mat4.create();
     mat4.lookAt(viewMatrix, vec3.fromValues(0, 0, 10), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
 
+    const normalMatrix = mat4.create();
+    mat4.transpose(normalMatrix, viewMatrix);
+    mat4.invert(normalMatrix, normalMatrix);
+
     this.shader.updateUniform(gl, "projectionMatrix", projectionMatrix);
     this.shader.updateUniform(gl, "modelViewMatrix", viewMatrix);
+    this.shader.updateUniform(gl, "normalMatrix", normalMatrix);
 
     this.monkeyMesh.render(gl, this.shader);
 

@@ -1,10 +1,8 @@
-varying vec4 normalOut;
+varying vec4 camSpaceNormal;
 
 void main() {
   vec3 n = normal;
-  normalOut = projectionMatrix *
-    modelViewMatrix *
-    vec4(n, 1.0);
+  camSpaceNormal = normalMatrix * vec4(n, 0.0);
   gl_Position =
     projectionMatrix *
     modelViewMatrix *

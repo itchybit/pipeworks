@@ -1,5 +1,7 @@
 
 
+varying vec4 camSpaceNormal;
+
 void main() {
-  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  gl_FragColor = vec4(camSpaceNormal.xyz, 1.0);
 }
