@@ -41,6 +41,7 @@ export default class Framebuffer {
       this._load(gl, ext);
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    gl.viewport(0, 0, this.width, this.height);
   }
 
   getTexture(name) {

@@ -63,7 +63,7 @@ class Demo {
       this.trackSynchronizer.setTime(row)
     }
 
-    this.renderer.render(this.scene.getAll(), context, width, height);
+    this.pixels = this.renderer.render(this.scene.getAll(), context, width, height);
   }
 
   togglePlay() {
