@@ -3,6 +3,7 @@ import renderTextureShader from '../shaders/renderTexture';
 
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
+
 import * as geomGen from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
 import Framebuffer  from './framebuffer';
@@ -36,6 +37,9 @@ export default class Renderer {
     const camPos = cam.get("pos");
     const camTarget = cam.get("target");
 
+    const pipe = sceneData.get('p1')
+    // console.log(pipe);
+    geomGen['pipe'](pipe);
     this.setup(gl);
     if (this.width !== width || this.height !== height) {
       this.resize(gl, width, height);
