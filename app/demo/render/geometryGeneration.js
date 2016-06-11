@@ -167,7 +167,7 @@ function createPipeMesh(points, values){
       vec3.add(r, v, firsth_norm);
       return r
     })
-    console.log(start_ring, end_ring)
+    // console.log(start_ring, end_ring)
     for (var vi = 0; vi < vcount; vi++) {
       verts.push(start_ring[vi], end_ring[vi]);
     }
