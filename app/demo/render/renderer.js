@@ -39,7 +39,7 @@ export default class Renderer {
 
     const pipe = sceneData.get('p1')
     // console.log(pipe);
-    geomGen['pipe'](pipe);
+    const pipeMesh = geomGen['pipe'](pipe);
     this.setup(gl);
     if (this.width !== width || this.height !== height) {
       this.resize(gl, width, height);
@@ -70,7 +70,9 @@ export default class Renderer {
     this.shader.updateUniform(gl, "normalMatrix", normalMatrix);
 
     this.shader.updateUniform(gl, "material", vec4.fromValues(0.5, 0.3, 0, 1));
-    this.monkeyMesh.render(gl, this.shader);
+    // this.monkeyMesh.render(gl, this.shader);
+
+    pipeMesh.render(gl, this.shader);
 
     this.fbo.deactivate(gl);
 

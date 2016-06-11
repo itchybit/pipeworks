@@ -1,5 +1,5 @@
 import {vec3,vec4, mat4} from "gl-matrix"
-
+import Mesh from "./mesh"
 function create_vec3s(p){
   const pos = vec3.fromValues(p.get('x'),p.get('y'),p.get('z'));
   const norm = vec3.fromValues(p.get('nx'),p.get('ny'),p.get('nz'));
@@ -20,16 +20,16 @@ function main_axis(v){
   }
 }
 const TESTVALS = new Map([
-  ['vcount', 4],
+  ['vcount', 6],
   ['crad', 1],
   ['cdepth', 0.1],
-  ['pradius', 1],
+  ['pradius', 0.1],
 ])
 export function pipe(par) {
   const points = getPipePoints(par);
   const mesh = createPipeMesh(points, TESTVALS);
   // console.log(mesh);
-  // return mesh;
+  return mesh;
 
 }
 
@@ -136,7 +136,8 @@ function createPipeMesh(points, values){
 
   // console.log(ring);
 
-  for (var i_corner = 1; i_corner < points.length - 1; i_corner++) {
+  // for (var i_corner = 1; i_corner < points.length - 1; i_corner++) {
+    const i_corner = 1;
     const start_point = points[i_corner - 1];
     const end_point = points[i_corner + 1];
     const corner_point = points[i_corner];
@@ -167,12 +168,16 @@ function createPipeMesh(points, values){
       vec3.add(r, v, firsth_norm);
       return r
     })
-    console.log(start_ring, end_ring)
+    // console.log(start_ring, end_ring)
     for (var vi = 0; vi < vcount; vi++) {
-      verts.push(start_ring[vi], end_ring[vi]);
+      verts.push(...start_ring[vi], ...end_ring[vi]);
+      vert_normals.push(...vec3.create(), ...vec3.create());
     }
-  }
+  // }
   addIndicies(indices, vcount, verts.length);
+  const mesh = new Mesh({vertices:verts, vertexNormals:vert_normals, indices:indices})
+  console.log(mesh)
+  return mesh;
 }
 
 function addIndicies(ind, vcount, arrLen){
