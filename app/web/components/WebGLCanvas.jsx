@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 export default class WebGLCanvas extends Component {
   constructor() {
     super();
-    this.state = {};
-    console.log("Component created");
+    this.state = {
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    };
     this._tick = this._tick.bind(this);
+    this._handleResize = this._handleResize.bind(this);
   }
   componentDidMount() {
-    console.log("Component mounted");
     try {
       const context =
         this.refs.glcanvas.getContext('webgl') ||
@@ -20,22 +22,26 @@ export default class WebGLCanvas extends Component {
     } catch(error) {
       console.log(error);
     }
+    window.addEventListener('resize', this._handleResize);
   }
 
   _tick() {
     if (this.state.context) {
-      this.props.renderer.render(this.state.context);
+      this.props.renderer.render(this.state.context, this.state.windowWidth, this.state.windowHeight);
     }
     requestAnimationFrame(this._tick);
   }
 
+  _handleResize(e) {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    });
+  }
+
   render() {
-    // console.log(this.state);
-    // if (this.state.context) {
-    //   this.props.renderer.render(this.state.context);
-    // }
     return (
-      <canvas ref="glcanvas" id="glcanvas" width="640" height="480">
+      <canvas ref="glcanvas" id="glcanvas" width={ this.state.windowWidth } height={ this.state.windowHeight }>
         Your browser doesn't appear to support the
         <code>&lt;canvas&gt;</code> element.
       </canvas>

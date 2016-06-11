@@ -50,19 +50,10 @@ export default class ShaderProgram {
       uniformString += "uniform " + uniform.type + " " + uniformName + ";\n";
     });
 
-    // console.log("Uniform string");
-    // console.log(uniformString);
-    // console.log(this.uniforms);
-    // const uniformString = this.uniforms.values().reduce((result, uniform) => {
-    //   return result + "uniform " + uniform.type + " " + uniform.name + ";\n";
-    // });
-
     const augmentedVertexSource =
       "precision mediump float;\n" + attributeString + uniformString + this.vertexSource;
     const augmentedFragmentSource =
       "precision mediump float;\n" + uniformString + this.fragmentSource;
-
-    // console.log(augmentedFragmentSource);
 
     this.program = shaderHelpers.createProgramFromScripts(
       gl,

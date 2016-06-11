@@ -56,14 +56,14 @@ class Demo {
     this.trackSynchronizer.setTime(time);
   }
 
-  render(context) {
+  render(context, width, height) {
     if(this.playing) {
       let row = this.audio.currentTime * ROW_RATE;
       this.trackSynchronizer.syncDevice.update(row);
       this.trackSynchronizer.setTime(row)
     }
 
-    this.renderer.render(this.scene.getAll(), context);
+    this.renderer.render(this.scene.getAll(), context, width, height);
   }
 
   togglePlay() {

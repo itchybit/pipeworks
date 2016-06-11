@@ -5,7 +5,6 @@ export default class SyncValue {
     this.trackName = trackName;
     this.trackSynchronizer = trackSynchronizer;
     this.tracked = trackedValues.indexOf(this.trackName) > -1;
-    // console.log(this.tracked, this.trackName,trackedValues.indexOf(this.trackName));
     if (this.tracked){
       this.trackSynchronizer.addTrack(trackName);
     }

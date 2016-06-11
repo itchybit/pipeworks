@@ -1,7 +1,5 @@
 import debugShader from '../shaders/debug';
 import renderTextureShader from '../shaders/renderTexture';
-import renderTexTopLeftShader from '../shaders/renderTextureTopLeft';
-import renderTexTopRightShader from '../shaders/renderTextureTopRight';
 
 import { mat4, vec3 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
@@ -10,33 +8,30 @@ import ShaderProgram from './shaderProgram';
 import Framebuffer  from './framebuffer';
 
 import Mesh from './mesh';
-import { monkey, cube, triangle, square, topLeft, topRight } from '../constants/models';
+import { monkey, cube, triangle } from '../constants/models';
 
 import * as glHelpers from '../helpers/glHelpers';
+import { FLOAT_SIZE } from '../constants';
 
 export default class Renderer {
   constructor() {
     this.shader = debugShader;
     this.renderTexShader = renderTextureShader;
-    this.renderTexTopLeftShader = renderTexTopLeftShader;
-    this.renderTexTopRightShader = renderTexTopRightShader;
     this.triangleMesh = new Mesh(triangle);
     this.monkeyMesh = new Mesh(monkey);
-    this.squareMesh = new Mesh(square);
-    this.topLeft = new Mesh(topLeft);
-    this.topRight = new Mesh(topRight);
 
     this.fbo = new Framebuffer(640, 480);
-    // this.fbo.attachRenderTarget('')
     this.fbo.attachRenderTarget('depth', 'DEPTH_ATTACHMENT', 'DEPTH_COMPONENT');
     this.fbo.attachRenderTarget('normal', 'COLOR_ATTACHMENT', 'RGB');
     this.fbo.attachRenderTarget('color', 'COLOR_ATTACHMENT', 'RGB');
 
     this.nearPlane = 0.1;
     this.farPlane = 100.0;
+    this.width = 0;
+    this.height = 0;
   }
 
-  render(sceneData, context) {
+  render(sceneData, context, width, height) {
     const gl = context;
 
     const cam = sceneData.get('cam');
@@ -44,7 +39,10 @@ export default class Renderer {
     const camTarget = cam.get("target");
 
     this.setup(gl);
-    this.resize(gl, 640, 480);
+    if (this.width !== width || this.height !== height) {
+      this.resize(gl, width, height);
+    }
+    // this.resize(gl, 640, 480);
     this.clearCanvas(gl);
 
     this.shader.use(gl);
@@ -74,37 +72,55 @@ export default class Renderer {
 
     this.fbo.deactivate(gl);
 
-    this.renderTextureToTopRight(gl, this.fbo.getTexture('color'));
-    this.renderTextureToTopLeft(gl, this.fbo.getTexture('normal'));
-    // this.renderTextureToScreen(gl, this.fbo.getTexture('color'));
+    this.renderTextureToScreenSegment(gl, this.fbo.getTexture('depth'), -0.5, 0.5, 0.5, 0.5);
+    this.renderTextureToScreenSegment(gl, this.fbo.getTexture('normal'), 0.5, 0.5, 0.5, 0.5);
+    this.renderTextureToScreenSegment(gl, this.fbo.getTexture('color'), 0.5, -0.5, 0.5, 0.5);
 
   }
 
-  renderTextureToScreen(gl, texture) {
-    // console.log(texture);
+
+  renderTextureToScreenSegment(gl, texture, originX, originY, width, height) {
+    if (!this.screenSegmentBuffer) {
+      this.screenSegmentBuffer = gl.createBuffer();
+      this.screenSegmentIndexBuffer = gl.createBuffer();
+    }
     this.renderTexShader.use(gl);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, texture);
     this.renderTexShader.updateUniform(gl, "tex", 0);
-    this.squareMesh.render(gl, this.renderTexShader);
-  }
 
-  renderTextureToTopLeft(gl, texture) {
-    // console.log(texture);
-    this.renderTexTopLeftShader.use(gl);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    this.renderTexTopLeftShader.updateUniform(gl, "tex", 0);
-    this.topLeft.render(gl, this.renderTexTopLeftShader);
-  }
+    const halfWidth = width;
+    const halfHeight = height;
 
-  renderTextureToTopRight(gl, texture) {
-    // console.log(texture);
-    this.renderTexTopRightShader.use(gl);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    this.renderTexTopRightShader.updateUniform(gl, "tex", 0);
-    this.topRight.render(gl, this.renderTexTopRightShader);
+    const vertices = [
+      originX - halfWidth, originY + halfHeight,
+      0, 1,
+      originX + halfWidth, originY + halfHeight,
+      1, 1,
+      originX + halfWidth, originY - halfHeight,
+      1, 0,
+      originX - halfWidth, originY - halfHeight,
+      0, 0
+    ];
+    const indices = [
+      0, 3, 1,
+      1, 3, 2
+    ];
+
+    glHelpers.bufferData(gl, vertices, this.screenSegmentBuffer);
+    glHelpers.bufferIndexData(gl, indices, this.screenSegmentIndexBuffer);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.screenSegmentBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.screenSegmentIndexBuffer);
+
+    gl.vertexAttribPointer(
+      this.renderTexShader.getAttributeLocation("position"),
+      2, gl.FLOAT, false, 4 * FLOAT_SIZE, 0);
+    gl.vertexAttribPointer(
+      this.renderTexShader.getAttributeLocation("uv"),
+      2, gl.FLOAT, false, 4 * FLOAT_SIZE, 2 * FLOAT_SIZE);
+
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
   }
 
   setup(gl) {
@@ -120,8 +136,6 @@ export default class Renderer {
     }
     if (!this.shader.built) this.shader.build(gl);
     if (!this.renderTexShader.built) this.renderTexShader.build(gl);
-    if (!this.renderTexTopLeftShader.built) this.renderTexTopLeftShader.build(gl);
-    if (!this.renderTexTopRightShader.built) this.renderTexTopRightShader.build(gl);
     gl.clearColor(0, 0, 0, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -134,6 +148,9 @@ export default class Renderer {
   resize(gl, width, height) {
     this.viewPortWidth = width;
     this.viewPortHeight = height;
+    this.width = width;
+    this.height = height;
     gl.viewport(0, 0, width, height);
+    this.fbo.resize(gl, width, height);
   }
 }

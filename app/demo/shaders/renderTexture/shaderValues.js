@@ -3,7 +3,7 @@ export const shaderValues = {
     "tex": "sampler2D"
   },
   attributes: {
-    "position": "vec3",
-    "normal": "vec3"
+    "position": "vec2",
+    "uv": "vec2"
   }
 }
