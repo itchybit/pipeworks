@@ -1,11 +1,12 @@
 import debugShader from '../shaders/debug';
 import renderTextureShader from '../shaders/renderTexture';
 
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
 import * as geomGen from './geometryGeneration'
 import ShaderProgram from './shaderProgram';
 import Framebuffer  from './framebuffer';
+import firstPassFBO from '../framebuffers/firstPass';
 
 import Mesh from './mesh';
 import { monkey, cube, triangle } from '../constants/models';
@@ -20,10 +21,7 @@ export default class Renderer {
     this.triangleMesh = new Mesh(triangle);
     this.monkeyMesh = new Mesh(monkey);
 
-    this.fbo = new Framebuffer(640, 480);
-    this.fbo.attachRenderTarget('depth', 'DEPTH_ATTACHMENT', 'DEPTH_COMPONENT');
-    this.fbo.attachRenderTarget('normal', 'COLOR_ATTACHMENT', 'RGB');
-    this.fbo.attachRenderTarget('color', 'COLOR_ATTACHMENT', 'RGB');
+    this.fbo = firstPassFBO(640, 480);
 
     this.nearPlane = 0.1;
     this.farPlane = 100.0;
@@ -42,9 +40,8 @@ export default class Renderer {
     if (this.width !== width || this.height !== height) {
       this.resize(gl, width, height);
     }
-    // this.resize(gl, 640, 480);
-    this.clearCanvas(gl);
 
+    this.clearCanvas(gl);
     this.shader.use(gl);
 
     this.fbo.activate(gl, this.ext, this.shader);
@@ -68,11 +65,12 @@ export default class Renderer {
     this.shader.updateUniform(gl, "modelViewMatrix", viewMatrix);
     this.shader.updateUniform(gl, "normalMatrix", normalMatrix);
 
+    this.shader.updateUniform(gl, "material", vec4.fromValues(0.5, 0.3, 0, 1));
     this.monkeyMesh.render(gl, this.shader);
 
     this.fbo.deactivate(gl);
 
-    this.renderTextureToScreenSegment(gl, this.fbo.getTexture('depth'), -0.5, 0.5, 0.5, 0.5);
+    this.renderTextureToScreenSegment(gl, this.fbo.getTexture('depth'), -0.5, -0.5, 0.5, 0.5);
     this.renderTextureToScreenSegment(gl, this.fbo.getTexture('normal'), 0.5, 0.5, 0.5, 0.5);
     this.renderTextureToScreenSegment(gl, this.fbo.getTexture('color'), 0.5, -0.5, 0.5, 0.5);
 

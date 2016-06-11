@@ -1,0 +1,23 @@
+<sync rows="128">
+	<tracks>
+		<track name="cam_pos_x">
+			<key value="0" interpolation="1" row="0"/>
+			<key value="4" interpolation="3" row="16"/>
+			<key value="0" interpolation="1" row="32"/>
+			<key value="-4" interpolation="3" row="48"/>
+			<key value="0" interpolation="0" row="64"/>
+		</track>
+		<track name="cam_pos_y"/>
+		<track name="cam_pos_z">
+			<key value="4" interpolation="3" row="0"/>
+			<key value="0" interpolation="1" row="16"/>
+			<key value="-4" interpolation="3" row="32"/>
+			<key value="0" interpolation="1" row="48"/>
+			<key value="4" interpolation="0" row="64"/>
+		</track>
+		<track name="cam_target_x"/>
+		<track name="cam_target_y"/>
+		<track name="cam_target_z"/>
+	</tracks>
+	<bookmarks/>
+</sync>
