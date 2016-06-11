@@ -17,15 +17,6 @@ export default class Mesh {
       this.vertexData.push(vertexNormals[i * 3 + 1]);
       this.vertexData.push(vertexNormals[i * 3 + 2]);
     }
-
-    // for (let i = 0; i < indices.length; i++) {
-    //   console.log(
-    //     "Vertex: " +
-    //     this.vertexData[i * 6] + " " +
-    //     this.vertexData[i * 6 + 1] + " " +
-    //     this.vertexData[i * 6 + 2]
-    //   );
-    // }
   }
 
   render(gl, shader) {
