@@ -1,5 +1,7 @@
 import debugShader from '../shaders/debug';
 import renderTextureShader from '../shaders/renderTexture';
+import renderTexTopLeftShader from '../shaders/renderTextureTopLeft';
+import renderTexTopRightShader from '../shaders/renderTextureTopRight';
 
 import { mat4, vec3 } from 'gl-matrix';
 import {geometryGenerator} from './geometryGeneration'
@@ -8,7 +10,7 @@ import ShaderProgram from './shaderProgram';
 import Framebuffer  from './framebuffer';
 
 import Mesh from './mesh';
-import { monkey, cube, triangle, square } from '../constants/models';
+import { monkey, cube, triangle, square, topLeft, topRight } from '../constants/models';
 
 import * as glHelpers from '../helpers/glHelpers';
 
@@ -16,11 +18,17 @@ export default class Renderer {
   constructor() {
     this.shader = debugShader;
     this.renderTexShader = renderTextureShader;
+    this.renderTexTopLeftShader = renderTexTopLeftShader;
+    this.renderTexTopRightShader = renderTexTopRightShader;
     this.triangleMesh = new Mesh(triangle);
     this.monkeyMesh = new Mesh(monkey);
     this.squareMesh = new Mesh(square);
+    this.topLeft = new Mesh(topLeft);
+    this.topRight = new Mesh(topRight);
 
     this.fbo = new Framebuffer(640, 480);
+    // this.fbo.attachRenderTarget('')
+    this.fbo.attachRenderTarget('normal', 'COLOR_ATTACHMENT', 'RGB');
     this.fbo.attachRenderTarget('color', 'COLOR_ATTACHMENT', 'RGB');
 
     this.nearPlane = 0.1;
@@ -30,12 +38,9 @@ export default class Renderer {
   render(sceneData, context) {
     const gl = context;
 
-    // console.log(sceneData.get('cam'));
-
     const cam = sceneData.get('cam');
     const camPos = cam.get("pos");
     const camTarget = cam.get("target");
-    // console.log(camPos.get('z'));
 
     this.setup(gl);
     this.resize(gl, 640, 480);
@@ -67,8 +72,9 @@ export default class Renderer {
 
     this.fbo.deactivate(gl);
 
-    console.log(this.fbo);
-    this.renderTextureToScreen(gl, this.fbo.getTexture('color'));
+    this.renderTextureToTopRight(gl, this.fbo.getTexture('color'));
+    this.renderTextureToTopLeft(gl, this.fbo.getTexture('normal'));
+    // this.renderTextureToScreen(gl, this.fbo.getTexture('color'));
 
   }
 
@@ -81,15 +87,37 @@ export default class Renderer {
     this.squareMesh.render(gl, this.renderTexShader);
   }
 
+  renderTextureToTopLeft(gl, texture) {
+    // console.log(texture);
+    this.renderTexTopLeftShader.use(gl);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    this.renderTexTopLeftShader.updateUniform(gl, "tex", 0);
+    this.topLeft.render(gl, this.renderTexTopLeftShader);
+  }
+
+  renderTextureToTopRight(gl, texture) {
+    // console.log(texture);
+    this.renderTexTopRightShader.use(gl);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    this.renderTexTopRightShader.updateUniform(gl, "tex", 0);
+    this.topRight.render(gl, this.renderTexTopRightShader);
+  }
+
   setup(gl) {
-    if (!this.shader.built) this.shader.build(gl);
-    if (!this.renderTexShader.built) this.renderTexShader.build(gl);
     if (!this.ext) {
       this.ext = gl.getExtension('WEBGL_draw_buffers');
       if (!this.ext) {
         throw ('WEBGL_draw_buffers not supported!');
+      } else {
+
       }
     }
+    if (!this.shader.built) this.shader.build(gl);
+    if (!this.renderTexShader.built) this.renderTexShader.build(gl);
+    if (!this.renderTexTopLeftShader.built) this.renderTexTopLeftShader.build(gl);
+    if (!this.renderTexTopRightShader.built) this.renderTexTopRightShader.build(gl);
     gl.clearColor(0, 0, 0, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);

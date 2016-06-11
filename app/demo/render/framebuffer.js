@@ -58,6 +58,13 @@ export default class Framebuffer {
         renderTarget.texture,
         0);
     })
+
+    const drawAttachments = [];
+    this.renderTargets.forEach((renderTarget) => {
+      drawAttachments.push(renderTarget.type);
+    });
+    ext.drawBuffersWEBGL(drawAttachments);
+
     const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     if (status !== gl.FRAMEBUFFER_COMPLETE) {
       console.log("Error: Framebuffer incomplete!");
