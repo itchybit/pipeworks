@@ -26,8 +26,10 @@ export function bufferIndexData(gl, data, location = -1) {
 }
 
 export function genTexture(gl, width, height, format) {
-  // const type = format === gl.RGB || format === gl.RGBA ? gl.FLOAT : gl.UNSIGNED_INT;
-  const type = gl.UNSIGNED_BYTE;
+  let type = gl.UNSIGNED_BYTE;
+  if (format === gl.DEPTH_COMPONENT) {
+    type = gl.UNSIGNED_INT;
+  }
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, type, null);

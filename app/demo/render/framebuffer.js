@@ -43,12 +43,15 @@ export default class Framebuffer {
         renderTarget.type =
           ext['COLOR_ATTACHMENT' + colorAttachmentCount + "_WEBGL"];
         colorAttachmentCount += 1;
+      } else if (renderTarget.typeName === 'DEPTH_ATTACHMENT') {
+        renderTarget.type =
+          gl.DEPTH_ATTACHMENT;
       }
 
-      const format = gl.RGBA;
-      // if (renderTarget.formatName === 'RGBA') {
-      //
-      // }
+      let format = gl.RGBA;
+      if (renderTarget.formatName === 'DEPTH_COMPONENT') {
+        format = gl.DEPTH_COMPONENT;
+      }
 
       renderTarget.texture = genTexture(gl, this.width, this.height, format);
       gl.framebufferTexture2D(
@@ -61,9 +64,13 @@ export default class Framebuffer {
 
     const drawAttachments = [];
     this.renderTargets.forEach((renderTarget) => {
-      drawAttachments.push(renderTarget.type);
+      if (renderTarget.typeName[0] === 'C') {
+        drawAttachments.push(renderTarget.type);
+      }
     });
     ext.drawBuffersWEBGL(drawAttachments);
+    console.log(drawAttachments);
+    // ext.drawBuffersWEBGL([gl.COLOR_ATTACHMENT0_WEBGL, gl.COLOR_ATTACHMENT1_WEBGL]);
 
     const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     if (status !== gl.FRAMEBUFFER_COMPLETE) {
@@ -71,5 +78,6 @@ export default class Framebuffer {
     }
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    this.loaded = true;
   }
 }

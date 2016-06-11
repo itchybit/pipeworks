@@ -28,6 +28,7 @@ export default class Renderer {
 
     this.fbo = new Framebuffer(640, 480);
     // this.fbo.attachRenderTarget('')
+    this.fbo.attachRenderTarget('depth', 'DEPTH_ATTACHMENT', 'DEPTH_COMPONENT');
     this.fbo.attachRenderTarget('normal', 'COLOR_ATTACHMENT', 'RGB');
     this.fbo.attachRenderTarget('color', 'COLOR_ATTACHMENT', 'RGB');
 
@@ -49,6 +50,7 @@ export default class Renderer {
     this.shader.use(gl);
 
     this.fbo.activate(gl, this.ext, this.shader);
+    this.clearCanvas(gl);
 
     const projectionMatrix = mat4.create();
     mat4.perspective(projectionMatrix, 45, this.viewPortWidth / this.viewPortHeight, this.nearPlane, this.farPlane);
@@ -110,8 +112,10 @@ export default class Renderer {
       this.ext = gl.getExtension('WEBGL_draw_buffers');
       if (!this.ext) {
         throw ('WEBGL_draw_buffers not supported!');
-      } else {
-
+      }
+      const depthExt = gl.getExtension('WEBGL_depth_texture');
+      if (!depthExt) {
+        throw ('WEBGL_depth_texture not supported!');
       }
     }
     if (!this.shader.built) this.shader.build(gl);
